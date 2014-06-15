@@ -43,28 +43,56 @@ test('buildPackage.buffer', function () {
 });
 
 test('uploadPackage', function () {
+  reset();
   var operation = 0;
-  return monploy.uploadPackage(new Buffer('hello world'), {
-    name: 'test package'
-  }, {
+  var bundle;
+  return monploy.release(resolve(__dirname + '/fixture'), {}, {
     db: {
       bundles: {
         insert: function (object) {
+          console.dir(object);
           assert(0 === operation++);
-          assert(object.name === 'test package');
+          assert(object.name === 'test-package');
           return Promise.resolve({_id: 'test-id'});
         }, update: function (query, update) {
           assert(2 === operation++);
           assert(query._id === 'test-id');
+          assert.deepEqual(update, { $set: { ready: true } });
           return Promise.resolve(null);
         }
       }
     },
     s3: {
-      putBuffer: function (buffer, path, callback) {
+      writeFile: function (path, buffer, callback) {
+        bundle = buffer;
+        assert(Buffer.isBuffer(buffer));
+        assert(path === '/test-id.tar.gz');
         assert(1 === operation++);
-        callback();
+        return Promise.resolve(null);
       }
     }
+  }).then(function () {
+    return monploy.extractPackage.buffer(bundle, __dirname + '/temp/package');
+  }).then(function () {
+    checkPackage();
+  });
+});
+test('list versions', function () {
+  return monploy.list('test-package', {
+    db: {
+      bundles: {
+        find: function (query) {
+          assert.deepEqual(query, {name: 'test-package', ready: true});
+          return {
+            sort: function (sorter) {
+              assert.deepEqual(sorter, {timestamp: -1});
+              return Promise.resolve([]);
+            }
+          };
+        }
+      }
+    }
+  }).then(function (res) {
+    assert.deepEqual(res, []);
   });
 });

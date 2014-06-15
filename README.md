@@ -10,6 +10,10 @@ Deployment tool with MongoDB and S3
 
     npm install monploy
 
+## Environment Variables
+
+ - `DEPLOY_DB` - a mongodb database to store metadata in
+
 ## License
 
   MIT
