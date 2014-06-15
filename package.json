@@ -1,0 +1,28 @@
+{
+  "name": "monploy",
+  "version": "0.0.0",
+  "description": "Deployment tool with MongoDB and S3",
+  "keywords": [],
+  "dependencies": {
+    "tar": "~0.1.19",
+    "knox": "~0.9.0",
+    "mongod": "~1.3.0",
+    "fstream": "~0.1.27",
+    "concat-stream": "~1.4.6",
+    "promise": "~5.0.0"
+  },
+  "devDependencies": {
+    "mkdirp": "~0.5.0",
+    "testit": "~1.2.0",
+    "rimraf": "~2.2.8"
+  },
+  "scripts": {
+    "test": "node test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ForbesLindesay/monploy.git"
+  },
+  "author": "ForbesLindesay",
+  "license": "MIT"
+}
