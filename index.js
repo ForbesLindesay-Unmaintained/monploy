@@ -6,6 +6,8 @@ exports.extractPackage = require('./lib/extract-package.js');
 
 // (name, options)
 exports.list = require('./lib/list-versions.js');
+// (options)
+exports.listPackages = require('./lib/list-packages.js');
 // (directory, info, options)
 exports.release = require('./lib/upload-package.js');
 // (id, directory, options)

@@ -2,11 +2,13 @@
 
 var assert = require('assert');
 var fs = require('fs');
-var resolve = require('path').resolve;
+var path = require('path');
+var resolve = path.resolve;
 var test = require('testit');
 var Promise = require('promise');
 var mkdirp = require('mkdirp').sync;
 var rimraf = require('rimraf').sync;
+var mkdirpAsync = Promise.denodeify(require('mkdirp'));
 var monploy = require('../');
 
 function reset() {
@@ -33,66 +35,60 @@ test('buildPackage', function (done) {
         .nodeify(done);
     });
 });
-test('buildPackage.buffer', function () {
+
+var LocalStore = {};
+LocalStore.writeFile = function (name, blob) {
+  var p = path.join(__dirname, 'temp', 'store', name);
+  return mkdirpAsync(path.dirname(p)).then(function () {
+    return Promise.denodeify(fs.writeFile)(p, blob);
+  });
+};
+LocalStore.readFile = function (name) {
+  var p = path.join(__dirname, 'temp', 'store', name);
+  return Promise.denodeify(fs.readFile)(p);
+};
+
+
+test('list versions', function () {
   reset();
-  return monploy.buildPackage.buffer(resolve(__dirname + '/fixture')).then(function (bundle) {
-    return monploy.extractPackage.buffer(bundle, __dirname + '/temp/package');
-  }).then(function () {
-    checkPackage();
+  return monploy.list('test-package', {store: LocalStore}).then(function (res) {
+    assert.deepEqual(res, []);
   });
 });
-
+test('list packages', function () {
+  reset();
+  return monploy.listPackages({store: LocalStore}).then(function (res) {
+    assert.deepEqual(res, []);
+  });
+});
 test('uploadPackage', function () {
   reset();
-  var operation = 0;
-  var bundle;
-  return monploy.release(resolve(__dirname + '/fixture'), {}, {
-    db: {
-      bundles: {
-        insert: function (object) {
-          console.dir(object);
-          assert(0 === operation++);
-          assert(object.name === 'test-package');
-          return Promise.resolve({_id: 'test-id'});
-        }, update: function (query, update) {
-          assert(2 === operation++);
-          assert(query._id === 'test-id');
-          assert.deepEqual(update, { $set: { ready: true } });
-          return Promise.resolve(null);
-        }
-      }
-    },
-    s3: {
-      writeFile: function (path, buffer, callback) {
-        bundle = buffer;
-        assert(Buffer.isBuffer(buffer));
-        assert(path === '/test-id.tar.gz');
-        assert(1 === operation++);
-        return Promise.resolve(null);
-      }
-    }
-  }).then(function () {
-    return monploy.extractPackage.buffer(bundle, __dirname + '/temp/package');
+  return monploy.release(resolve(__dirname + '/fixture'), {}, {store: LocalStore}).then(function () {
+    return monploy.listPackages({store: LocalStore});
+  }).then(function (packages) {
+    assert.deepEqual(packages, ['test-package']);
+    return monploy.list('test-package', {store: LocalStore});
+  }).then(function (versions) {
+    assert(versions.length === 1);
+    return monploy.download(
+      versions[0].id,
+      resolve(__dirname + '/temp/package'),
+      {store: LocalStore});
   }).then(function () {
     checkPackage();
-  });
-});
-test('list versions', function () {
-  return monploy.list('test-package', {
-    db: {
-      bundles: {
-        find: function (query) {
-          assert.deepEqual(query, {name: 'test-package', ready: true});
-          return {
-            sort: function (sorter) {
-              assert.deepEqual(sorter, {timestamp: -1});
-              return Promise.resolve([]);
-            }
-          };
-        }
-      }
-    }
-  }).then(function (res) {
-    assert.deepEqual(res, []);
+    return monploy.release(resolve(__dirname + '/fixture'), {}, {store: LocalStore})
+  }).then(function () {
+    return monploy.listPackages({store: LocalStore});
+  }).then(function (packages) {
+    assert.deepEqual(packages, ['test-package']);
+    return monploy.list('test-package', {store: LocalStore});
+  }).then(function (versions) {
+    assert(versions.length === 2);
+    return monploy.download(
+      versions[1].id,
+      resolve(__dirname + '/temp/package'),
+      {store: LocalStore});
+  }).then(function () {
+    checkPackage();
   });
 });

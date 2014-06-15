@@ -9,7 +9,8 @@
     "mongod": "~1.3.0",
     "fstream": "~0.1.27",
     "concat-stream": "~1.4.6",
-    "promise": "~5.0.0"
+    "promise": "~5.0.0",
+    "guid": "0.0.12"
   },
   "devDependencies": {
     "mkdirp": "~0.5.0",
