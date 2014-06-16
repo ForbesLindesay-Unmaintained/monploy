@@ -1,6 +1,6 @@
 {
   "name": "monploy",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "description": "Deployment tool with MongoDB and S3",
   "bin": {
     "monploy": "./bin/cli.js"
