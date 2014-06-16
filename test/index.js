@@ -63,7 +63,7 @@ test('list packages', function () {
 });
 test('uploadPackage', function () {
   reset();
-  return monploy.release(resolve(__dirname + '/fixture'), {}, {store: LocalStore}).then(function () {
+  return monploy.upload(resolve(__dirname + '/fixture'), {}, {store: LocalStore}).then(function () {
     return monploy.listPackages({store: LocalStore});
   }).then(function (packages) {
     assert.deepEqual(packages, ['test-package']);
@@ -76,7 +76,7 @@ test('uploadPackage', function () {
       {store: LocalStore});
   }).then(function () {
     checkPackage();
-    return monploy.release(resolve(__dirname + '/fixture'), {}, {store: LocalStore})
+    return monploy.upload(resolve(__dirname + '/fixture'), {}, {store: LocalStore})
   }).then(function () {
     return monploy.listPackages({store: LocalStore});
   }).then(function (packages) {

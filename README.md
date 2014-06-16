@@ -12,7 +12,10 @@ Deployment tool with MongoDB and S3
 
 ## Environment Variables
 
- - `DEPLOY_DB` - a mongodb database to store metadata in
+ - `DEPLOY_KEY` - an AWS S3 key
+ - `DEPLOY_SECRET` - an AWS S3 secret
+ - `DEPLOY_BUCKET` - an AWS S3 bucket
+ - `DEPLOY_REGION` - an optional AWS S3 region
 
 ## License
 
