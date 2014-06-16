@@ -13,3 +13,8 @@ exports.listPackages = require('./lib/list-packages.js');
 exports.upload = require('./lib/upload-package.js');
 // (id, directory, options)
 exports.download = require('./lib/download-package.js');
+
+exports.listDeployments = require('./lib/list-deployments.js');
+exports.addDeployment = require('./lib/add-deployment.js');
+exports.updateDeployment = require('./lib/update-deployment.js');
+exports.getDeployment = require('./lib/get-deployment.js');

@@ -92,3 +92,24 @@ test('uploadPackage', function () {
     checkPackage();
   });
 });
+
+test('deployment', function () {
+  reset();
+  return monploy.listDeployments('test-package', {store: LocalStore}).then(function (res) {
+    assert.deepEqual(res, []);
+    return monploy.addDeployment('test-package', {domain: 'example.com'}, {store: LocalStore});
+  }).then(function () {
+    return monploy.listDeployments('test-package', {store: LocalStore});
+  }).then(function (res) {
+    assert(res.length === 1);
+    assert(res[0].domain === 'example.com');
+    res[0].port = 3000;
+    return monploy.updateDeployment(res[0], {store: LocalStore});
+  }).then(function () {
+    return monploy.listDeployments('test-package', {store: LocalStore});
+  }).then(function (res) {
+    assert(res.length === 1);
+    assert(res[0].domain === 'example.com');
+    assert(res[0].port === 3000);
+  });
+});
