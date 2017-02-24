@@ -6,18 +6,18 @@
     "monploy": "./bin/cli.js"
   },
   "dependencies": {
-    "tar": "~0.1.19",
+    "tar": "~2.2.1",
     "knox": "~0.9.0",
-    "fstream": "~0.1.27",
-    "concat-stream": "~1.4.6",
-    "promise": "~5.0.0",
+    "fstream": "~1.0.10",
+    "concat-stream": "~1.6.0",
+    "promise": "~7.1.1",
     "guid": "0.0.12",
-    "minimist": "~0.1.0"
+    "minimist": "~1.2.0"
   },
   "devDependencies": {
     "mkdirp": "~0.5.0",
-    "testit": "~1.2.0",
-    "rimraf": "~2.2.8"
+    "testit": "~2.1.3",
+    "rimraf": "~2.6.1"
   },
   "scripts": {
     "test": "node test"
