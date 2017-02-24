@@ -1,5 +1,7 @@
 # monploy
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/ForbesLindesay/monploy.svg)](https://greenkeeper.io/)
+
 Deployment tool with MongoDB and S3
 
 [![Build Status](https://img.shields.io/travis/ForbesLindesay/monploy/master.svg)](https://travis-ci.org/ForbesLindesay/monploy)
